@@ -1,3 +1,18 @@
+---
+title: Pediatric Cardiology Quiz Board
+emoji: 🫀
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+short_description: Pediatric cardiology quiz board with Socket.IO multiplayer
+tags:
+  - education
+  - cardiology
+  - quiz
+  - multiplayer
+---
+
 # Pediatric Cardiology Quiz Board
 
 A local multiplayer pediatric cardiology quiz-board program for personal educational use. The host laptop creates a room, projects the board, and shows a QR/link for iPhone players to join by room code and display name.
@@ -45,6 +60,15 @@ The simplest free option for the current architecture is Render Free:
 Render Free can spin down when idle, so the first load before a session may take
 about a minute. Keep the host page open during play so the WebSocket traffic
 keeps the service awake.
+
+Hugging Face Spaces is another free host that fits this app because it supports
+Docker Spaces and custom domains:
+
+1. Create a new Space and choose `Docker`.
+2. Push this repo with the root `Dockerfile` and the README frontmatter above.
+3. The container listens on port `7860`, which matches the Space config.
+4. In Hugging Face Space settings, add a custom domain and point a CNAME at the
+   `*.hf.space` hostname that Hugging Face assigns to the Space.
 
 ## Structure
 
