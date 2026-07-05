@@ -51,10 +51,10 @@ The simplest free option for the current architecture is Render Free:
    - Start command: `npm start`
 4. After Render deploys, open the Render URL and create a room.
 5. In Cloudflare DNS for `stevetodman.com`, add a CNAME such as:
-   - Name: `cardio`
+   - Name: `cardiojeopardy`
    - Target: the Render hostname
    - Proxy: DNS only until Render verifies the custom domain
-6. Add `cardio.stevetodman.com` as a custom domain in Render, then switch the
+6. Add `cardiojeopardy.stevetodman.com` as a custom domain in Render, then switch the
    Cloudflare proxy back on if desired.
 
 Render Free can spin down when idle, so the first load before a session may take

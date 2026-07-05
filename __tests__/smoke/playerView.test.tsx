@@ -117,7 +117,7 @@ describe('player view', () => {
 
   test('prefills a saved session and can rejoin on load', async () => {
     localStorage.setItem(
-      'simcitypedscards.player.session.v1',
+      'cardiojeopardy.player.session.v1',
       JSON.stringify({
         roomCode: 'AB12',
         displayName: 'Jordan',

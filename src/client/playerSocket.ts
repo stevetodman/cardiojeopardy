@@ -23,7 +23,7 @@ export interface PlayerSession {
   updatedAtMs: number
 }
 
-export const PLAYER_SESSION_STORAGE_KEY = 'simcitypedscards.player.session.v1'
+export const PLAYER_SESSION_STORAGE_KEY = 'cardiojeopardy.player.session.v1'
 
 export interface PlayerSocketClient {
   connect: () => void
