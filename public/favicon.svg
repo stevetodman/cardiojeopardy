@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Quiz board favicon">
+  <rect width="64" height="64" rx="12" fill="#081229"/>
+  <rect x="8" y="10" width="48" height="44" rx="8" fill="#0f2148" stroke="#ffd56e" stroke-width="2"/>
+  <rect x="14" y="16" width="12" height="9" rx="2" fill="#7fe5ff"/>
+  <rect x="28" y="16" width="12" height="9" rx="2" fill="#ffd56e"/>
+  <rect x="42" y="16" width="8" height="9" rx="2" fill="#96ffd3"/>
+  <rect x="14" y="28" width="12" height="9" rx="2" fill="#c88cff"/>
+  <rect x="28" y="28" width="12" height="9" rx="2" fill="#d95b53"/>
+  <rect x="42" y="28" width="8" height="9" rx="2" fill="#7fe5ff"/>
+  <rect x="14" y="40" width="36" height="7" rx="2" fill="#f5f8ff"/>
+</svg>

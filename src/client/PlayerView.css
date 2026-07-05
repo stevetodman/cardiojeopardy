@@ -1,0 +1,366 @@
+.player-shell {
+  min-height: 100vh;
+  padding:
+    calc(16px + env(safe-area-inset-top))
+    calc(14px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(14px + env(safe-area-inset-left));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.24)),
+    linear-gradient(180deg, #eff4f6 0%, #f7f2e7 100%);
+  color: var(--ink);
+}
+
+.player-frame {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.player-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.player-brand {
+  min-width: 0;
+}
+
+.player-brand h1 {
+  margin: 2px 0 0;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--teal-dark);
+}
+
+.player-brand p,
+.player-card p,
+.player-meta,
+.player-note,
+.player-caption,
+.player-deadline,
+.player-scoreline,
+.player-small {
+  margin: 0;
+  color: var(--muted);
+}
+
+.player-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 252, 244, 0.92);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.player-chip strong {
+  color: var(--ink);
+}
+
+.player-card,
+.player-panel,
+.player-board,
+.player-banner,
+.player-summary {
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.96);
+  box-shadow: 0 8px 0 rgba(43, 43, 51, 0.12);
+}
+
+.player-card,
+.player-panel,
+.player-banner,
+.player-summary {
+  padding: 16px;
+}
+
+.player-card h2,
+.player-panel h2,
+.player-summary h2,
+.player-banner h2 {
+  margin: 0 0 8px;
+  line-height: 1.05;
+}
+
+.player-form {
+  display: grid;
+  gap: 12px;
+}
+
+.player-field-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.player-field {
+  display: grid;
+  gap: 6px;
+}
+
+.player-field label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.player-field input,
+.player-field textarea,
+.player-wager input {
+  width: 100%;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 12px;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.player-field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.player-actions,
+.player-actions-row,
+.player-choice-grid,
+.player-board-grid,
+.player-score-list,
+.player-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.player-actions,
+.player-actions-row {
+  align-items: center;
+}
+
+.player-card button,
+.player-panel button,
+.player-summary button {
+  min-height: 48px;
+  padding: 12px 15px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: var(--teal);
+  color: white;
+  font-weight: 900;
+  font-size: 1rem;
+  box-shadow: 0 4px 0 rgba(43, 43, 51, 0.2);
+}
+
+.player-card button:disabled,
+.player-panel button:disabled,
+.player-summary button:disabled {
+  opacity: 0.55;
+}
+
+.player-secondary {
+  background: #fff8dd !important;
+  color: var(--ink) !important;
+}
+
+.player-danger {
+  background: var(--danger) !important;
+}
+
+.player-ghost {
+  background: white !important;
+  color: var(--ink) !important;
+}
+
+.player-banner {
+  display: grid;
+  gap: 8px;
+}
+
+.player-banner strong {
+  color: var(--ink);
+}
+
+.player-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(46, 140, 140, 0.12);
+  color: var(--teal-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.player-status.is-warning {
+  background: rgba(217, 164, 65, 0.16);
+  color: #8c6112;
+}
+
+.player-status.is-danger {
+  background: rgba(185, 58, 53, 0.14);
+  color: var(--danger);
+}
+
+.player-board {
+  padding: 14px;
+}
+
+.player-board-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.player-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.player-clue,
+.player-answer,
+.player-team-card {
+  display: grid;
+  gap: 6px;
+  min-height: 112px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.player-clue strong,
+.player-answer strong,
+.player-team-card strong {
+  color: var(--ink);
+}
+
+.player-clue button,
+.player-answer button {
+  width: 100%;
+  justify-content: center;
+}
+
+.player-clue .player-small,
+.player-answer .player-small {
+  color: var(--muted);
+}
+
+.player-board-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.player-time {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--teal-dark);
+}
+
+.player-full {
+  width: 100%;
+}
+
+.player-touch-target {
+  min-height: 56px;
+}
+
+.player-buzz {
+  min-height: 132px;
+  font-size: 1.35rem;
+}
+
+.player-wager {
+  display: grid;
+  gap: 10px;
+}
+
+.player-wager-controls {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.player-wager-range {
+  width: 100%;
+}
+
+.player-summary-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.player-summary-list li,
+.player-scores li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.player-scores {
+  display: grid;
+  gap: 10px;
+}
+
+.player-scores li strong {
+  color: var(--ink);
+}
+
+.player-muted {
+  color: var(--muted);
+}
+
+.player-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.player-divider {
+  height: 1px;
+  background: rgba(48, 45, 53, 0.14);
+}
+
+@media (max-width: 720px) {
+  .player-header {
+    flex-direction: column;
+  }
+
+  .player-field-grid,
+  .player-grid,
+  .player-wager-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .player-wager-controls {
+    display: grid;
+  }
+}

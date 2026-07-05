@@ -1,0 +1,45 @@
+.route-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(10, 16, 38, 0.94), rgba(15, 23, 42, 0.9)),
+    #0b1120;
+  color: #f7fbff;
+}
+
+.route-card {
+  width: min(720px, 100%);
+  border: 2px solid rgba(248, 196, 88, 0.45);
+  border-radius: 8px;
+  background: rgba(10, 18, 40, 0.88);
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.34);
+}
+
+.route-kicker {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #8fd9ff;
+}
+
+.route-card h1 {
+  margin: 0 0 12px;
+  font-size: 2rem;
+  line-height: 1.05;
+}
+
+.route-card p {
+  margin: 0 0 16px;
+  max-width: 60ch;
+  color: rgba(247, 251, 255, 0.82);
+}
+
+.route-card a {
+  color: #ffd56e;
+  font-weight: 800;
+}
