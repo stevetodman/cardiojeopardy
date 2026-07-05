@@ -1,3 +1,7 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
+import { get } from 'node:http'
 import { afterEach, describe, expect, test } from 'vitest'
 import { io, type Socket } from 'socket.io-client'
 import {
@@ -17,12 +21,15 @@ function waitFor<T>(socket: Socket, eventName: string): Promise<T> {
 }
 
 let serverHandle: GameServerHandle | null = null
+let tempDirs: string[] = []
 
 afterEach(async () => {
   if (serverHandle) {
     await serverHandle.close()
     serverHandle = null
   }
+  await Promise.all(tempDirs.map(async (dir) => rm(dir, { recursive: true, force: true })))
+  tempDirs = []
 })
 
 describe('quiz board server', () => {
@@ -100,6 +107,28 @@ describe('quiz board server', () => {
     rejoinSocket.disconnect()
     hostSocket.disconnect()
   })
+
+  test('serves the built app shell and static assets in production mode', async () => {
+    const distRoot = await mkdtemp(join(tmpdir(), 'quiz-board-dist-'))
+    tempDirs.push(distRoot)
+    const distDir = resolve(distRoot, 'dist')
+    await mkdir(resolve(distDir, 'assets'), { recursive: true })
+    await writeFile(resolve(distDir, 'index.html'), '<!doctype html><html><body><main id="app">built shell</main></body></html>')
+    await writeFile(resolve(distDir, 'assets', 'main.css'), 'body{background:#123456;}')
+
+    serverHandle = await startGameServer({ dev: false, port: 0, staticDir: distDir, logger: quietLogger() })
+
+    const appShell = await httpGet(`${serverHandle.baseUrl}/player?room=AB12`)
+    expect(appShell.statusCode).toBe(200)
+    expect(appShell.headers['content-type']).toContain('text/html')
+    expect(appShell.body).toContain('built shell')
+
+    const asset = await httpGet(`${serverHandle.baseUrl}/assets/main.css`)
+    expect(asset.statusCode).toBe(200)
+    expect(asset.headers['content-type']).toContain('text/css')
+    expect(asset.headers['cache-control']).toBe('public, max-age=31536000, immutable')
+    expect(asset.body).toContain('background:#123456')
+  })
 })
 
 function quietLogger(): Pick<Console, 'log' | 'warn' | 'error'> {
@@ -108,4 +137,23 @@ function quietLogger(): Pick<Console, 'log' | 'warn' | 'error'> {
     warn() {},
     error() {},
   }
+}
+
+function httpGet(url: string): Promise<{ statusCode: number | undefined; headers: Record<string, string | string[] | undefined>; body: string }> {
+  return new Promise((resolvePromise, reject) => {
+    get(url, (response) => {
+      const chunks: Buffer[] = []
+      response.on('data', (chunk) => {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+      })
+      response.on('end', () => {
+        resolvePromise({
+          statusCode: response.statusCode,
+          headers: response.headers,
+          body: Buffer.concat(chunks).toString('utf8'),
+        })
+      })
+      response.on('error', reject)
+    }).on('error', reject)
+  })
 }

@@ -27,14 +27,13 @@ This app needs a persistent Node process because Socket.IO and the authoritative
 room state live on the server. Static-only hosts are not enough for multiplayer
 rooms.
 
-The lowest-friction free option for the current architecture is Render Free:
+The simplest free option for the current architecture is Render Free:
 
 1. Push this repo to GitHub.
 2. In Render, create a new Blueprint or Web Service from the repo.
 3. Use `render.yaml`, or set:
-   - Build command: `npm install && npm run build`
-   - Start command: `npm run start`
-   - Node version: `22`
+   - Build command: `npm ci && npm run build`
+   - Start command: `npm start`
 4. After Render deploys, open the Render URL and create a room.
 5. In Cloudflare DNS for `stevetodman.com`, add a CNAME such as:
    - Name: `cardio`
