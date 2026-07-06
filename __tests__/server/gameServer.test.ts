@@ -68,6 +68,90 @@ describe('quiz board server', () => {
     }
   })
 
+  test('uses forwarded host and proto for join URLs ahead of SPACE_HOST', async () => {
+    const previousSpaceHost = process.env.SPACE_HOST
+    process.env.SPACE_HOST = 'stevetodman-cardiojeopardy.hf.space'
+    try {
+      serverHandle = await startGameServer({ dev: false, port: 0, logger: quietLogger() })
+      const address = serverHandle.httpServer.address()
+      if (!address || typeof address !== 'object') {
+        throw new Error('Expected test server to expose a local port.')
+      }
+
+      const hostSocket = io(`http://127.0.0.1:${address.port}`, {
+        autoConnect: true,
+        transports: ['websocket'],
+        extraHeaders: {
+          'x-forwarded-host': 'cards.example.org',
+          'x-forwarded-proto': 'https',
+        },
+      })
+      await waitFor(hostSocket, 'connect')
+
+      hostSocket.emit(CLIENT_TO_SERVER_EVENT.HOST_CREATE_ROOM, {
+        roomName: 'Forwarded URL Room',
+        hostName: 'Host',
+      })
+
+      const roomCreated = await waitFor<ServerRoomCreatedPayload & { joinUrl: string }>(hostSocket, SERVER_TO_CLIENT_EVENT.ROOM_CREATED)
+      expect(roomCreated.joinUrl).toBe(`https://cards.example.org/player?room=${roomCreated.roomCode}`)
+
+      hostSocket.disconnect()
+    } finally {
+      if (previousSpaceHost === undefined) {
+        delete process.env.SPACE_HOST
+      } else {
+        process.env.SPACE_HOST = previousSpaceHost
+      }
+    }
+  })
+
+  test('uses PUBLIC_BASE_URL ahead of forwarded headers', async () => {
+    const previousSpaceHost = process.env.SPACE_HOST
+    const previousPublicBaseUrl = process.env.PUBLIC_BASE_URL
+    process.env.SPACE_HOST = 'stevetodman-cardiojeopardy.hf.space'
+    process.env.PUBLIC_BASE_URL = 'https://public.example.net'
+    try {
+      serverHandle = await startGameServer({ dev: false, port: 0, logger: quietLogger() })
+      const address = serverHandle.httpServer.address()
+      if (!address || typeof address !== 'object') {
+        throw new Error('Expected test server to expose a local port.')
+      }
+
+      const hostSocket = io(`http://127.0.0.1:${address.port}`, {
+        autoConnect: true,
+        transports: ['websocket'],
+        extraHeaders: {
+          'x-forwarded-host': 'cards.example.org',
+          'x-forwarded-proto': 'https',
+        },
+      })
+      await waitFor(hostSocket, 'connect')
+
+      hostSocket.emit(CLIENT_TO_SERVER_EVENT.HOST_CREATE_ROOM, {
+        roomName: 'Explicit Public URL Room',
+        hostName: 'Host',
+      })
+
+      const roomCreated = await waitFor<ServerRoomCreatedPayload & { joinUrl: string }>(hostSocket, SERVER_TO_CLIENT_EVENT.ROOM_CREATED)
+      expect(serverHandle.baseUrl).toBe('https://public.example.net')
+      expect(roomCreated.joinUrl).toBe(`https://public.example.net/player?room=${roomCreated.roomCode}`)
+
+      hostSocket.disconnect()
+    } finally {
+      if (previousPublicBaseUrl === undefined) {
+        delete process.env.PUBLIC_BASE_URL
+      } else {
+        process.env.PUBLIC_BASE_URL = previousPublicBaseUrl
+      }
+      if (previousSpaceHost === undefined) {
+        delete process.env.SPACE_HOST
+      } else {
+        process.env.SPACE_HOST = previousSpaceHost
+      }
+    }
+  })
+
   test('rejects forged mutations, restores rejoining players, and ignores client clock skew on heartbeat', async () => {
     serverHandle = await startGameServer({ dev: false, port: 0, logger: quietLogger() })
 

@@ -5,8 +5,8 @@
   "compatibility_date": "2026-07-06",
   "routes": [
     {
-      "pattern": "cardiojeopardy.stevetodman.com/*",
-      "zone_name": "stevetodman.com"
+      "pattern": "cardiojeopardy.stevetodman.com",
+      "custom_domain": true
     }
   ]
 }

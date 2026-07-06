@@ -559,10 +559,8 @@ function buildRoomUrls(baseUrl: string, roomCode: string): { joinUrl: string; ho
 }
 
 function getPublicBaseUrl(socket: Socket, fallbackBaseUrl: string): string {
-  const configured = getConfiguredBaseUrl()
-  if (configured) {
-    return configured
-  }
+  const configured = getConfiguredPublicBaseUrl()
+  if (configured) return configured
 
   const origin = socket.handshake.headers.origin
   if (typeof origin === 'string' && /^https?:\/\//.test(origin)) {
@@ -614,25 +612,17 @@ function getLanAddress(): string {
 }
 
 function getPublishedBaseUrl(port: number): string {
-  const configured = getConfiguredBaseUrl()
-  if (configured) {
-    return configured
-  }
+  const configured = getConfiguredPublicBaseUrl()
+  if (configured) return configured
+
+  const spaceHost = process.env.SPACE_HOST?.trim()
+  if (spaceHost) return `https://${spaceHost}`.replace(/\/$/, '')
+
   return `http://${getLanAddress()}:${port}`
 }
 
-function getConfiguredBaseUrl(): string {
-  const configured = sanitizeBaseUrl(process.env.PUBLIC_BASE_URL ?? process.env.RENDER_EXTERNAL_URL ?? process.env.PUBLIC_URL)
-  if (configured) {
-    return configured
-  }
-
-  const spaceHost = process.env.SPACE_HOST?.trim()
-  if (spaceHost) {
-    return `https://${spaceHost}`.replace(/\/$/, '')
-  }
-
-  return ''
+function getConfiguredPublicBaseUrl(): string {
+  return sanitizeBaseUrl(process.env.PUBLIC_BASE_URL ?? process.env.RENDER_EXTERNAL_URL ?? process.env.PUBLIC_URL)
 }
 
 function sanitizeBaseUrl(value: string | undefined): string {
