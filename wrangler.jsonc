@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cardiojeopardy",
+  "main": "cloudflare/cardiojeopardy-proxy.ts",
+  "compatibility_date": "2026-07-06",
+  "routes": [
+    {
+      "pattern": "cardiojeopardy.stevetodman.com/*",
+      "zone_name": "stevetodman.com"
+    }
+  ]
+}

@@ -70,6 +70,11 @@ Docker Spaces and custom domains:
 4. In Hugging Face Space settings, add a custom domain and point a CNAME at the
    `*.hf.space` hostname that Hugging Face assigns to the Space.
 
+HF custom domains require PRO. For a fully free custom domain, this repo includes
+a Cloudflare Worker proxy in `cloudflare/cardiojeopardy-proxy.ts` with
+`wrangler.jsonc`, routing `cardiojeopardy.stevetodman.com/*` to the running
+Hugging Face Space.
+
 ## Structure
 
 - `server`: Socket.IO/Vite development server and room lifecycle.
