@@ -9,6 +9,7 @@ import {
   CLIENT_TO_SERVER_EVENT,
   SERVER_TO_CLIENT_EVENT,
   type AckShape,
+  type ClientToServerEventName,
   type DeadlineShape,
   type ErrorShape,
   type ServerRoomCreatedPayload,
@@ -19,6 +20,7 @@ import {
   createRuntime,
   createSnapshot,
   createEngineError,
+  EngineError,
   getDeadline,
   heartbeat,
   hostFinalOverride,
@@ -173,7 +175,7 @@ function registerSocketHandlers(
       })
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_CREATE_ROOM, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_CREATE_ROOM, logger, (payload) => {
       const nowMs = Date.now()
       const roomCode = generateRoomCode(rooms)
       const runtime = createRuntime({
@@ -194,7 +196,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_PAUSE, () => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_PAUSE, logger, () => {
       const session = requireHostSession(socket, rooms)
       const nowMs = Date.now()
       session.runtime = pauseRoom(session.runtime, nowMs)
@@ -203,7 +205,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_RESUME, () => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_RESUME, logger, () => {
       const session = requireHostSession(socket, rooms)
       const nowMs = Date.now()
       session.runtime = continueRoom(session.runtime, nowMs)
@@ -212,7 +214,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_RESET_ROOM, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_RESET_ROOM, logger, (payload) => {
       const session = requireHostSession(socket, rooms)
       const nowMs = Date.now()
       session.runtime = resetRoom(session.runtime, nowMs, Boolean((payload as { hardReset?: boolean }).hardReset))
@@ -220,7 +222,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_KICK_PLAYER, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_KICK_PLAYER, logger, (payload) => {
       const session = requireHostSession(socket, rooms)
       const playerId = sanitizeText((payload as { playerId?: string }).playerId)
       const nowMs = Date.now()
@@ -242,7 +244,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.HOST_FINAL_OVERRIDE, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.HOST_FINAL_OVERRIDE, logger, (payload) => {
       const session = requireHostSession(socket, rooms)
       const nowMs = Date.now()
       session.runtime = hostFinalOverride(session.runtime, payload as { teamId?: string; wager?: number; answerId?: string; correct?: boolean }, nowMs)
@@ -251,7 +253,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_JOIN, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_JOIN, logger, (payload) => {
       const nowMs = Date.now()
       const roomCode = sanitizeRoomCode((payload as { roomCode?: string }).roomCode)
       const session = requireRoomSession(roomCode, rooms)
@@ -273,7 +275,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_REJOIN, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_REJOIN, logger, (payload) => {
       const nowMs = Date.now()
       const roomCode = sanitizeRoomCode((payload as { roomCode?: string }).roomCode)
       const session = requireRoomSession(roomCode, rooms)
@@ -296,7 +298,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_SELECT_CLUE, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_SELECT_CLUE, logger, (payload) => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       const playerId = requirePlayerId(socket)
@@ -306,7 +308,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_BUZZ, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_BUZZ, logger, (payload) => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       const playerId = requirePlayerId(socket)
@@ -316,7 +318,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_ANSWER_CHOICE, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_ANSWER_CHOICE, logger, (payload) => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       const playerId = requirePlayerId(socket)
@@ -332,7 +334,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_SUBMIT_WAGER, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_SUBMIT_WAGER, logger, (payload) => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       const playerId = requirePlayerId(socket)
@@ -342,7 +344,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_SUBMIT_FINAL_ANSWER, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_SUBMIT_FINAL_ANSWER, logger, (payload) => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       const playerId = requirePlayerId(socket)
@@ -352,7 +354,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.PLAYER_CONTINUE, () => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.PLAYER_CONTINUE, logger, () => {
       const nowMs = Date.now()
       const session = requirePlayerSession(socket, rooms)
       session.runtime = continueRoom(session.runtime, nowMs)
@@ -361,7 +363,7 @@ function registerSocketHandlers(
       broadcastSnapshot(io, session, nowMs)
     })
 
-    socket.on(CLIENT_TO_SERVER_EVENT.CLIENT_HEARTBEAT, (payload) => {
+    onClientEvent(socket, CLIENT_TO_SERVER_EVENT.CLIENT_HEARTBEAT, logger, (payload) => {
       const nowMs = Date.now()
       const token = sanitizeText((payload as { token?: string }).token)
       const roomCode = sanitizeRoomCode((payload as { roomCode?: string }).roomCode)
@@ -401,6 +403,46 @@ function registerSocketHandlers(
     socket.on('error', (error) => {
       logger.warn('[quiz-board] socket error', error)
     })
+  })
+}
+
+function onClientEvent(
+  socket: Socket,
+  eventName: ClientToServerEventName,
+  logger: Pick<Console, 'warn' | 'error'>,
+  handler: (payload: unknown) => void,
+): void {
+  socket.on(eventName, (payload) => {
+    try {
+      handler(payload)
+    } catch (error) {
+      emitSocketHandlerError(socket, eventName, error, logger)
+    }
+  })
+}
+
+function emitSocketHandlerError(
+  socket: Socket,
+  eventName: ClientToServerEventName,
+  error: unknown,
+  logger: Pick<Console, 'warn' | 'error'>,
+): void {
+  if (error instanceof EngineError) {
+    emitError(socket, {
+      code: error.code,
+      message: error.message,
+      retryable: error.retryable,
+      details: error.details ?? { eventName },
+    })
+    return
+  }
+
+  logger.error('[quiz-board] socket handler failed', error)
+  emitError(socket, {
+    code: 'internal_error',
+    message: 'Server could not process that action.',
+    retryable: true,
+    details: { eventName },
   })
 }
 

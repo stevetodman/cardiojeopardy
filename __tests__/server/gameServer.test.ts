@@ -152,6 +152,31 @@ describe('quiz board server', () => {
     }
   })
 
+  test('reports stale host controls without crashing the server', async () => {
+    serverHandle = await startGameServer({ dev: false, port: 0, logger: quietLogger() })
+
+    const hostSocket = io(serverHandle.baseUrl, {
+      autoConnect: true,
+      transports: ['websocket'],
+    })
+    await waitFor(hostSocket, 'connect')
+
+    hostSocket.emit(CLIENT_TO_SERVER_EVENT.HOST_RESUME, {})
+    const staleControlError = await waitFor<ErrorShape>(hostSocket, SERVER_TO_CLIENT_EVENT.ERROR)
+    expect(staleControlError.code).toBe('room_not_found')
+    expect(staleControlError.retryable).toBe(false)
+
+    hostSocket.emit(CLIENT_TO_SERVER_EVENT.HOST_CREATE_ROOM, {
+      roomName: 'Crash Guard Room',
+      hostName: 'Host',
+    })
+
+    const roomCreated = await waitFor<ServerRoomCreatedPayload & { joinUrl: string }>(hostSocket, SERVER_TO_CLIENT_EVENT.ROOM_CREATED)
+    expect(roomCreated.roomCode).toBeTruthy()
+
+    hostSocket.disconnect()
+  })
+
   test('rejects forged mutations, restores rejoining players, and ignores client clock skew on heartbeat', async () => {
     serverHandle = await startGameServer({ dev: false, port: 0, logger: quietLogger() })
 
